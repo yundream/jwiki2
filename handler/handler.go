@@ -22,7 +22,6 @@ func NewHandler(ws wiki.Store) *Handler {
 
 // Register ...
 func (h *Handler) Register(api *echo.Group) {
-
 	wiki := api.Group("/w/:filename")
 	wiki.POST("", h.GetWikiFromID)
 }
@@ -35,11 +34,6 @@ func (h *Handler) StoreGet() {
 
 // GetWikiFromID ...
 func (h *Handler) GetWikiFromID(c echo.Context) error {
-
-	data := struct {
-		Text string `json:"text"`
-	}{
-		Text: "Hello world",
-	}
-	return c.JSON(http.StatusCreated, data)
+	data, _ := h.wikiStore.GetByID(1)
+	return c.JSON(http.StatusOK, data)
 }
