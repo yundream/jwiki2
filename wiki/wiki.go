@@ -7,4 +7,5 @@ import (
 // Store ...
 type Store interface {
 	GetByID(int) (*model.Wiki, error)
+	SaveWikiPage(*model.Wiki) error
 }

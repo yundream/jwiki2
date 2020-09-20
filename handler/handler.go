@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"net/http"
 
+	"joinc.co.kr/jwiki/model"
+
 	"github.com/labstack/echo/v4"
 	"joinc.co.kr/jwiki/wiki"
 )
@@ -23,7 +25,24 @@ func NewHandler(ws wiki.Store) *Handler {
 // Register ...
 func (h *Handler) Register(api *echo.Group) {
 	wiki := api.Group("/w/:filename")
-	wiki.POST("", h.GetWikiFromID)
+	wiki.GET("", h.GetWikiFromID)
+	wiki.POST("", h.CreateWiki)
+}
+
+// CreateWiki ...
+func (h *Handler) CreateWiki(c echo.Context) error {
+	fmt.Println("Create Wiki")
+	var w model.Wiki
+	req := &wikiCreateRequest{}
+	if err := req.bind(c, &w); err != nil {
+		return c.JSON(http.StatusUnprocessableEntity, err)
+	}
+
+	err := h.wikiStore.SaveWikiPage(&w)
+	if err != nil {
+		return c.JSON(http.StatusUnprocessableEntity, err)
+	}
+	return nil
 }
 
 // StoreGet ...
